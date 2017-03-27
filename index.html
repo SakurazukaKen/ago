@@ -7,14 +7,14 @@
   </head>
   <body>
   <a href="" class="a-link" go='/foo'>Foo</a>
-  <a href="" calss="a-link" go='/bar'>Bar</a>
+  <a href="" class="a-link" go='/bar'>Bar</a>
   <div class="view">
 
   </div>
-  <script src="./dist/index.js"></script>
+  <script src="./index.js"></script>
   <script>
-    $router.regist('/foo', function(){document.getElementsByClassName('view')[0].innerHTML('<span>foo</span>')})
-    .regist('/bar', function(){document.getElementsByClassName('view')[0].innerHTML('<span>bar</span>')})
+    $router.regist('/foo', function(){document.getElementsByClassName('view')[0].innerHTML='<span>foo</span>'})
+    .regist('/bar', function(){document.getElementsByClassName('view')[0].innerHTML='<span>bar</span>'})
     .listen()
   </script>
   </body>

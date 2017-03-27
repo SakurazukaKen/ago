@@ -12,11 +12,11 @@ var router = {
     return url.toString().replace(/\/$/, '').replace(/^\//, '')
   },
   listen() {
-    window.onpopstate = this.trigger
+    window.onpopstate = this.trigger.bind(this)
     document.querySelectorAll('a.a-link').forEach(ele =>
       ele.onclick = (event) => {
-        this.go(event.target.getAttribute('go'))
         event.preventDefault()
+        this.go(event.target.getAttribute('go'))
       }
     )
   },
@@ -24,7 +24,7 @@ var router = {
     var state = event.state
     var fragment = this.getFragment()
     this.afterHook.forEach(fn => fn(state.from, fragment))
-    this._router[fragment]()
+    this._router[this.normalizeUrl(fragment)]()
     this.beforeHook.forEach(fn => fn(state.from, fragment))
   },
   regist(re, handler) {
@@ -43,6 +43,7 @@ var router = {
   },
   go(url, title) {
     window.history.pushState({ from: this.getFragment() }, title ? title : document.title, url)
+    this.trigger({state: { from: this.getFragment()}})
   }
 
 }
