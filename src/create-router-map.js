@@ -1,25 +1,31 @@
-export function createRouterMap (routes, oldPathMap, oldNameMap) {
+import {getRegexp} from './params'
+export function createRouterMap (routes, oldPathMap, oldRegexps) {
   const pathMap = oldPathMap || Object.create(null)
-  const nameMap = oldNameMap || Object.create(null)
+  const regexps = oldRegexps || []
+  routes.forEach(route => addRouteRecord(pathMap, regexps, route))
 
-  routes.forEach(route => addRouteRecord(pathMap, nameMap, route))
-
-  return {pathMap, nameMap}
+  return {pathMap}
 }
 
-function addRouteRecord(pathMap, nameMap, route, base) {
-  const {rawPath, name} = route
-  const patternPath = rawPath.replace(/:(\w | \-)?/g, 'PARAMS')
-  const hasParams = rawPath.indexOf(':') > -1
-  const routeRecord = {
-    rawpath: rawPath,
-    patternPath: patternPath,
-    name: name,
-    handler: route.handler,
-    base: base,
-    hasParams: hasParams
+function addRouteRecord(pathMap, regexps, route, base) {
+  const {path, name} = route
+  const hasParams = path.indexOf(':') > -1
+  if (hasParams) {
+    let {keys, reg} = getRegexp(path)
+    regexps.push({
+      path,
+      keys,
+      reg,
+      handler: route.handler,
+    })
+  } else {
+    const routeRecord = {
+      path: path,
+      name: name,
+      handler: route.handler,
+      base: base
+    }
+    pathMap[path] = routeRecord
   }
-
-  pathMap[patternPath] = routeRecord
-  nameMap[name] = routeRecord
+  return {pathMap, regexps}
 }
