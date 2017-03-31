@@ -5,17 +5,17 @@ const compilerCache = Object.create(null)
 
 export function getRegexp(path) {
   let hit = regexpCache[path]
-  let keys, regexp
+  let keys, reg
   if (hit) {
     keys = hit.keys
-    regexp = hit.regexp
+    reg = hit.reg
   } else {
     keys = []
-    regexp = Regexp(path, keys)
-    regexpCache[path] = {keys, regexp}
+    reg = Regexp(path, keys)
+    regexpCache[path] = {keys, reg}
   }
 
-  return {keys, regexp}
+  return {keys, reg}
 }
 
 export function compilePath(path, params) {

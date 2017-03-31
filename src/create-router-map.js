@@ -4,28 +4,29 @@ export function createRouterMap (routes, oldPathMap, oldRegexps) {
   const regexps = oldRegexps || []
   routes.forEach(route => addRouteRecord(pathMap, regexps, route))
 
-  return {pathMap}
+  return {pathMap, regexps}
 }
 
-function addRouteRecord(pathMap, regexps, route, base) {
-  const {path, name} = route
-  const hasParams = path.indexOf(':') > -1
-  if (hasParams) {
+function addRouteRecord(pathMap, regexps, route) {
+  let {handler, path, beforeEnter, afterLeave} = route
+  if (!path || !handler) {
+    console.log('path and handler is necessary')
+  }
+  const hasParams = /:(\w|-)+/g.test(path)
+  let routeRecord = {
+    path,
+    handler,
+    beforeEnter,
+    afterLeave,
+    hasParams,
+  }
+  pathMap[path] = routeRecord
+  if(hasParams) {
     let {keys, reg} = getRegexp(path)
     regexps.push({
-      path,
-      keys,
       reg,
-      handler: route.handler,
+      keys,
+      routeRecord
     })
-  } else {
-    const routeRecord = {
-      path: path,
-      name: name,
-      handler: route.handler,
-      base: base
-    }
-    pathMap[path] = routeRecord
   }
-  return {pathMap, regexps}
 }
