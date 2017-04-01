@@ -46,6 +46,7 @@ class Router {
     }
     if (!route) {
       window.history.replaceState({}, '', '/')
+      route = this.pathMap['/']
     }
     return route
   }
